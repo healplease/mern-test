@@ -1,0 +1,45 @@
+version: '3.8'
+
+services:
+  backend:
+    container_name: backend
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    env_file:
+      - ./backend/.env
+    ports:
+      - 5000:5000
+    networks:
+      - backend-nw
+      - frontend-nw
+    volumes:
+      - ./backend:/app/backend
+
+  frontend:
+    container_name: frontend
+    working_dir: /app/frontend
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    env_file:
+      - ./frontend/.env
+    ports:
+      - 3000:3000
+    networks:
+      - frontend-nw
+    volumes:
+      - ./frontend:/app/frontend
+
+  database:
+    container_name: database
+    image: mongo:latest
+    command: mongod --quiet --logpath /dev/null
+    ports:
+      - 27017:27017
+    networks:
+      - backend-nw
+
+networks:
+  backend-nw:
+  frontend-nw:
