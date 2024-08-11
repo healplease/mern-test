@@ -8,7 +8,11 @@ import vuetify, { transformAssetUrls } from 'vite-plugin-vuetify'
 export default defineConfig({
   plugins: [
     vue({
-      template: { transformAssetUrls }
+      template: { 
+        transformAssetUrls,
+        // custom elements start with uppercase letter
+        compilerOptions: { isCustomElement: tag => tag[0] === tag[0].toUpperCase() }
+      }
     }),
     vuetify({ autoImport: true })
   ],
