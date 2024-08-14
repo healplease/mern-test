@@ -9,21 +9,21 @@ export const navigationItems = [
     }
   },
   {
-    title: 'About',
-    value: 'about',
+    title: 'My Todo Lists',
+    value: 'todolists',
     props: {
-      prependIcon: 'mdi-account',
+      prependIcon: 'mdi-format-list-checks',
       link: true,
-      // to: '/about',
+      to: '/todolists',
     }
   },
   {
-    title: 'Contact',
-    value: 'contact',
+    title: 'Create New Todo List',
+    value: 'create-todolist',
     props: {
-      prependIcon: 'mdi-email',
+      prependIcon: 'mdi-plus',
       link: true,
-      // to: '/contact',
+      to: '/todolists/create',
     }
-  }
+  },
 ]
