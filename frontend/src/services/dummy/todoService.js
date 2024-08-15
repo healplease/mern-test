@@ -1,4 +1,4 @@
-import { dummyUser, currentUser } from './userService';
+import { dummyUsers, currentUser } from '@/services/dummy/authService';
 
 export const dummyTodoLists = [{
   id: 1,
@@ -6,7 +6,7 @@ export const dummyTodoLists = [{
   description: 'This is a dummy todo list.',
   createdAt: '2021-01-01',
   updatedAt: '2021-01-01',
-  createdBy: dummyUser,
+  createdBy: dummyUsers[0].id,
   todos: [
     {
       id: 1,

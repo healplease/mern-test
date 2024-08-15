@@ -15,8 +15,8 @@ export let currentUser = null;
 export const dummyAuthService = {
   async register(username, email, password) {
     await new Promise((resolve) => setTimeout(resolve, 500));
-    if (email === dummyUser.email) {
-      throw new Error('Email already in use');
+    if (dummyUsers.find((user) => user.email === email)) {
+      throw new Error('User with this email already exists');
     }
     const user = {
       id: dummyUsers.length + 1,
