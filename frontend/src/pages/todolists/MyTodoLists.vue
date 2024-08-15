@@ -8,7 +8,6 @@
 </template>
 
 <script>
-import { dummyTodoService } from '@/services/dummy/todoService';
 export default {
   name: 'MyTodoLists',
   data() {
@@ -16,8 +15,5 @@ export default {
       todoLists: []
     }
   },
-  created() {
-    this.todoLists = dummyTodoService.getTodoLists();
-  }
 }
 </script>

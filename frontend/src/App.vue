@@ -49,15 +49,15 @@
               v-bind="props"
             >
               <v-avatar>
-                <v-img :src="user.avatar" />
+                <v-img :src="user.avatar ? user.avatar : `https://www.gravatar.com/avatar/${user.username}?d=mp&s=40`" />
               </v-avatar>
             </v-btn>
           </template>
 
           <v-card width="300">
             <v-img 
-              :src="user.avatar"
-              height="150"
+              :src="user.avatar ? user.avatar : `https://www.gravatar.com/avatar/${user.username}?d=mp&size=300`"
+              height="200"
               cover
             />
             <v-card-text>
@@ -140,7 +140,7 @@
 
 <script>
 import { navigationItems } from '@/components/navigation/constants';
-import { dummyAuthService } from './services/dummy/authService';
+import { authService } from './services/authService';
 export default { 
   name: 'App',
   data: () => ({
@@ -170,23 +170,25 @@ export default {
     }
   },
   created() {
-    dummyAuthService.getCurrentUser().then(user => {
+    authService.me().then(({ user }) => {
       this.user = user;
     });
   },
   methods: {
     login() {
-      dummyAuthService.login(
+      authService.login(
         this.loginForm.email,
         this.loginForm.password
-      ).then(user => {
+      ).then(({ user }) => {
         this.user = user;
+        this.loginForm.email = '';
+        this.loginForm.password = '';
       }).catch(() => {
-        alert('Invalid credentials');
+        this.loginError = 'Invalid credentials';
       });
     },
     logout() {
-      dummyAuthService.logout().then(() => {
+      authService.logout().then(() => {
         this.user = null;
       });
     }

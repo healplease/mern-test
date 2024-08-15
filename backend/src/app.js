@@ -1,10 +1,20 @@
 import express from 'express';
-import mongoose from 'mongoose';
+import cors from 'cors';
 
-mongoose.connect(`mongodb://${process.env.MONGO_USERNAME}:${process.env.MONGO_PASSWORD}@database:27017/${process.env.MONGO_DATABASE}`);
+import { connect } from './db.js';
+
+import authRouter from './auth/routes.js';
 
 const app = express();
 
+app.use(express.json());
+app.use(cors({
+  origin: process.env.FRONTEND_URL,
+  optionsSuccessStatus: 200,
+}));
+app.use('/api/auth', authRouter);
+
 app.listen(process.env.PORT, () => {
+  connect();
   console.log(`Server is running on port ${process.env.PORT}`);
 });
