@@ -19,7 +19,7 @@ export const TodoSchema = new mongoose.Schema({
 TodoSchema.virtual("tasks", {
   ref: "Task",
   localField: "_id",
-  foreignField: "todo",
+  foreignField: "todoId",
 });
 
 TodoSchema.virtual("user", {
