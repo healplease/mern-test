@@ -43,8 +43,6 @@ services:
     restart: always
     env_file:
       - ./backend/.env
-    ports:
-      - 27017:27017
     networks:
       - backend-nw
 

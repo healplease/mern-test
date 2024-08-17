@@ -1,5 +1,22 @@
 <template>
   <v-layout>
+    <!-- alerts -->
+    <v-snackbar
+      v-model="alert.show"
+      :color="alert.color"
+      top
+    >
+      <span class="text-lead pe-3">{{ alert.message }}</span>
+      <v-btn
+        text
+        variant="outlined"
+        @click="alert.show = false"
+      >
+        Close
+      </v-btn>
+    </v-snackbar>
+
+
     <v-navigation-drawer
       :rail="rail"
       permanent
@@ -34,10 +51,8 @@
       <v-app-bar-title>Todoer</v-app-bar-title>
 
       <template v-slot:append>
-        
         <v-menu
-          v-if="user"
-          v-model="loginMenu"
+          v-model="authMenu"
           :close-on-content-click="false"
           :nudge-right="40"
           transition="scale-transition"
@@ -48,81 +63,33 @@
               icon
               v-bind="props"
             >
-              <v-avatar>
+              <v-avatar v-if="user">
                 <v-img :src="user.avatar ? user.avatar : `https://www.gravatar.com/avatar/${user.username}?d=mp&s=40`" />
               </v-avatar>
+              <v-icon v-else>mdi-account</v-icon>
             </v-btn>
           </template>
 
-          <v-card width="300">
-            <v-img 
-              :src="user.avatar ? user.avatar : `https://www.gravatar.com/avatar/${user.username}?d=mp&size=300`"
-              height="200"
-              cover
-            />
-            <v-card-text>
-              <div class="d-flex flex-column align-center">
-                <p class="text-h6">Hello, {{ user.username }}</p>
-              </div>
-              <v-divider class="my-3" />
-              <v-btn @click="logout">Logout</v-btn>
-            </v-card-text>
-          </v-card>
+          <UserCard
+            v-if="user"
+            :user="user"
+            @logout="user = null"
+          />
+
+          <LoginCard
+            v-if="!user && !signUpShow"
+            @login="(user) => this.user = user"
+            @change-card="card => signUpShow = card === 'sign-up'"
+          />
+
+          <SignUpCard
+            v-if="!user && signUpShow"
+            @sign-up="(user) => this.user = user"
+            @change-card="card => signUpShow = card === 'sign-up'"
+          />
+
         </v-menu>
-
-        <v-menu
-          v-else
-          v-model="loginMenu"
-          :close-on-content-click="false"
-          :nudge-right="40"
-          transition="scale-transition"
-          offset-y
-        >
-          <template v-slot:activator="{ props }">
-            <v-btn
-              icon
-              v-bind:="props"
-            >
-              <v-icon>mdi-account</v-icon>
-            </v-btn>
-          </template>
-          
-          <v-card min-width="300">
-            <v-card-text>
-              <p class="text-h6">Login</p>
-              <v-divider class="my-3" />
-              <v-form
-                v-model="loginFormValid"
-                :rules="loginFormRules"
-                @submit.prevent="login"
-              >
-                <v-text-field
-                  v-model="loginForm.email"
-                  label="E-mail"
-                  required
-                  :rules="loginFormRules.email"
-                />
-                <v-text-field
-                  v-model="loginForm.password"
-                  label="Password"
-                  type="password"
-                  required
-                  :rules="loginFormRules.password"
-                />
-                <v-btn
-                  type="submit"
-                  :disabled="!loginFormValid"
-                >
-                  Login
-                </v-btn>
-              </v-form>
-            </v-card-text>
-          </v-card>
-        </v-menu>
-
-
       </template>
-
     </v-app-bar>
 
 
@@ -141,29 +108,28 @@
 <script>
 import { navigationItems } from '@/components/navigation/constants';
 import { authService } from './services/authService';
+import UserCard from './components/auth/UserCard.vue';
+import LoginCard from './components/auth/LoginCard.vue';
+import SignUpCard from './components/auth/SignUpCard.vue';
 export default { 
   name: 'App',
   data: () => ({
+    alert: {
+      show: false,
+      message: '',
+      color: ''
+    },
     rail: true,
-    loginMenu: false,
-    loginFormValid: false,
-    loginForm: {
-      email: '',
-      password: ''
-    },
-    loginFormRules: {
-      email: [
-        v => !!v || 'E-mail is required',
-        v => /.+@.+\..+/.test(v) || 'E-mail must be valid',
-      ],
-      password: [
-        v => !!v || 'Password is required',
-      ]
-    },
-    loginError: null,
     navigationItems: navigationItems,
-    user: null
+    user: null,
+    signUpShow: false,
+    authMenu: false
   }),
+  components: {
+    UserCard,
+    LoginCard,
+    SignUpCard
+  },
   watch: {
     $route() {
       this.rail = true;
@@ -172,26 +138,19 @@ export default {
   created() {
     authService.me().then(({ user }) => {
       this.user = user;
+    }).catch(() => {
+      this.user = null;
+      if (localStorage.getItem('authToken')) {
+        this.alert = {
+          show: true,
+          message: 'Your session has expired. Please login again.',
+          color: 'error'
+        };
+        localStorage.removeItem('authToken');
+      }
+
     });
   },
-  methods: {
-    login() {
-      authService.login(
-        this.loginForm.email,
-        this.loginForm.password
-      ).then(({ user }) => {
-        this.user = user;
-        this.loginForm.email = '';
-        this.loginForm.password = '';
-      }).catch(() => {
-        this.loginError = 'Invalid credentials';
-      });
-    },
-    logout() {
-      authService.logout().then(() => {
-        this.user = null;
-      });
-    }
-  }
+  methods: {}
 }
 </script>

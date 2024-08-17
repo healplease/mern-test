@@ -10,8 +10,6 @@ export default defineConfig({
     vue({
       template: { 
         transformAssetUrls,
-        // custom elements start with uppercase letter
-        compilerOptions: { isCustomElement: tag => tag[0] === tag[0].toUpperCase() }
       }
     }),
     vuetify({ autoImport: true })
