@@ -17,9 +17,7 @@ export const login = async (req, res, _next) => {
 };
 
 export const register = async (req, res, _next) => {
-  const { username, email, password } = req.body;
-
-  const user = new User({ username, email, password });
+  const user = new User({ ...req.body });
   await user.save();
 
   return res.json({ token: user.generateJWT(), user: user.toJSON() });
