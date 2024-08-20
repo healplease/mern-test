@@ -5,7 +5,7 @@ import { authMiddleware } from "./middleware.js";
 
 const authRouter = Router({ mergeParams: true });
 
-authRouter.get("/me", authMiddleware, me);
+authRouter.get("/me",  authMiddleware, me);
 authRouter.post("/login", login);
 authRouter.post("/register", register);
 

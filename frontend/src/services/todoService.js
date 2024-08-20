@@ -1,28 +1,53 @@
 import client from "@/client";
 
 export const todoService = {
-  async createTodoList(title, description) {
-    const response = await client.post('/todo-lists', { title, description });
-    return response.data;
-  },
-
   async getTodoLists() {
-    const response = await client.get('/todo-lists');
+    const response = await client.get('/api/todos/');
     return response.data;
   },
 
-  async getTodoList(id) {
-    const response = await client.get(`/todo-lists/${id}`);
+  async createTodoList(payload) {
+    const response = await client.post('/api/todos/', payload);
     return response.data;
   },
 
-  async updateTodoList(id, title, description) {
-    const response = await client.put(`/todo-lists/${id}`, { title, description });
+  async getTodoList(todoId) {
+    const response = await client.get(`/api/todos/${todoId}`);
     return response.data;
   },
 
-  async deleteTodoList(id) {
-    const response = await client.delete(`/todo-lists/${id}`);
+  async updateTodoList(todoId, payload) {
+    const response = await client.patch(`/api/todos/${todoId}`, payload);
+    return response.data;
+  },
+
+  async deleteTodoList(todoId) {
+    const response = await client.delete(`/api/todos/${todoId}`);
+    return response.data;
+  },
+
+  async getTodoTasks(todoId) {
+    const response = await client.get(`/api/todos/${todoId}/tasks`);
+    return response.data;
+  },
+
+  async createTodoTask(todoId, payload) {
+    const response = await client.post(`/api/todos/${todoId}/tasks`, payload);
+    return response.data;
+  },
+
+  async getTodoTask(todoId, taskId) {
+    const response = await client.get(`/api/todos/${todoId}/tasks/${taskId}`);
+    return response.data;
+  },
+
+  async updateTodoTask(todoId, taskId, payload) {
+    const response = await client.patch(`/api/todos/${todoId}/tasks/${taskId}`, payload);
+    return response.data;
+  },
+
+  async deleteTodoTask(todoId, taskId) {
+    const response = await client.delete(`/api/todos/${todoId}/tasks/${taskId}`);
     return response.data;
   },
 };
